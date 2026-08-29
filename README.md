@@ -36,8 +36,8 @@ server
     │
     ├── http
     │   ├── http_recv.c         # 负责接收完整 HTTP 请求报文
-    │   ├── http_parse.c        # HTTP 请求数据结构与解析接口
-    │   └── http_response.c     # HTTP 响应发送接口
+    │   ├── http_parse.c        # 负责解析 HTTP 请求报文
+    │   └── http_response.c     # 负责向客户端发送 Hello World!
     │
     └── include                 # 头文件声明
         ├── http_recv.h
@@ -47,10 +47,11 @@ server
 
 ## 注意
 
-本项目生产意义不大, 实际是一份学习笔记, 为突出 HTTP 基本流程, 刻意省略了：
+本项目生产意义不大, 实际是一份笔记, 为突出 HTTP 基本流程, 刻意省略了：
 
 - 单线程, 串行处理连接, 不支持并发
 - 只返回固定的 `Hello World!`, 没有路由, 静态文件和业务逻辑
 - 只实现最基础的 HTTP/1.x 收发, 不支持 Keep-Alive, HTTP/2 等
 - 请求缓冲区固定为 8 KB, 请求头最多保存 32 个, 超限处理未实现
 - 没有错误处理和输入校验
+- 以及未列出的各种生产冗余设计
