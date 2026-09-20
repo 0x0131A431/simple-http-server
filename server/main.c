@@ -69,7 +69,7 @@ int main(void) {
         parse_http1_request(buf, request_length, &request);
 
         /** 向客户端发送 HTTP 响应报文 */
-        send_http1_response(connectfd);
+        send_http1_response(connectfd, &request);
 
         /**************************************/
 
