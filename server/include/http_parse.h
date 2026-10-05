@@ -11,6 +11,8 @@ struct http_header {
 struct http_request {
     char *method;   // 请求方法
     char *target;   // 资源路径
+    char *path;     // 路径
+    char *query;    // 查询字符串
     char *version;  // HTTP 版本
 
     struct http_header headers[32]; // 请求头键值对(key:value)数组

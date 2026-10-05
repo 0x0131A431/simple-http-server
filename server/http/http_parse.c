@@ -23,6 +23,15 @@ void parse_http1_request(char *buf, size_t length, struct http_request *request)
     request->method = buf;
     request->target = target;
     request->version = version;
+
+    /** target = /home?q1=...&q2=... */
+    request->path = target;
+    request->query = NULL;
+    char *query_separator = strchr(target, '?');
+    if (query_separator != NULL) {
+        *query_separator = '\0';
+        request->query = query_separator + 1;
+    }
     
     request->header_count = 0;  // 请求头字段计数
     char *line = line_end + 2;  // 移动到请求头起始位置

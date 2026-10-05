@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>        // 定义了 strncasecmp, 是忽略大小写、限定长度的字符串的比较函数
 #include <sys/socket.h>
 
 
@@ -14,17 +15,31 @@
  */
 static size_t get_content_length(char *buf, char *headers_end) {
 
+    static const char filed_name[] = "Content-Length";  // 请求体长度字段名
+    size_t filed_name_length = sizeof filed_name - 1;   // 长度也要相同, 防类似 Content-Length-Test
+
     char *line = strstr(buf, "\r\n");   // 请求行的结尾, 指向 "\r\n" 的 '\r'
 
     while (line < headers_end) {
 
-        size_t length;
-
         line += 2;  // 此行的起点
 
-        /** 检查是否以 "Content-Length: " 开头 */
-        if (sscanf(line, "Content-Length: %zu", &length) == 1) {
-            return length;  // 如果满足则匹配字段值 %zu -> size_t, 赋值给 length
+        char *colon = strchr(line, ':');
+
+        /** 检查:
+         * 1. 分隔符不为空
+         * 2. 分隔符前字段名长度 = 请求体字段名长度
+         * 3. 对比此行与 filed_name 的前 filed_name_length 个字符相等
+         */
+        if (
+            colon != NULL &&
+            (size_t)(colon - line) == filed_name_length &&
+            strncasecmp(line, filed_name, filed_name_length) == 0
+        ) {
+            size_t length;
+            if (sscanf(colon + 1, " %zu", &length) == 1) {
+                return length;  // 如果满足则匹配字段值 %zu -> size_t, 赋值给 length
+            }
         }
 
         line = strstr(line, "\r\n");    // 此行的结尾
